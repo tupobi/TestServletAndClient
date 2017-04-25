@@ -34,62 +34,62 @@ public class MainActivity extends AppCompatActivity {
     private List<Manager> managers;
     private TextView tv;
 
-    private void PostDataToServletWithHttpURLConnection() {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String strUrl = "http://192.168.3.8:8080/TestJson/servlet/GetDataFromClient";
-                URL url = null;
-                try {
-                    Log.d("------------->", "PostDataToServlet: 进入传值方法！！！");
-                    url = new URL(strUrl);
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    //...........设置相关参数，暂时不写出来。。
-                    urlConnection.setRequestMethod("POST");
-                    urlConnection.setDoInput(true);
-                    urlConnection.setDoOutput(true);
-                    urlConnection.setUseCaches(false);
-                    urlConnection.setInstanceFollowRedirects(true);
-                    urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-//                    urlConnection.setRequestProperty("Charset", "utf-8");
-//                    urlConnection.setReadTimeout(5000);
-//                    urlConnection.setConnectTimeout(5000);
-
-                    urlConnection.connect();
-
-
-                    DataOutputStream dataOutputStream = new DataOutputStream(urlConnection.getOutputStream());
-                    String data = "param1=" + URLEncoder.encode("哈哈哈哈！", "utf-8")+"&param2="+URLEncoder.encode("get到！！", "UTF-8");
-                    dataOutputStream.writeBytes(data);
-//                    String content = "firstname=" + URLEncoder.encode("一个大肥人", "utf-8");
-                    dataOutputStream.flush();
-                    dataOutputStream.close();
+//    private void PostDataToServletWithHttpURLConnection() {
+//
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                String strUrl = "http://192.168.3.8:8080/TestJson/servlet/GetDataFromClient";
+//                URL url = null;
+//                try {
+//                    Log.d("------------->", "PostDataToServlet: 进入传值方法！！！");
+//                    url = new URL(strUrl);
+//                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//                    //...........设置相关参数，暂时不写出来。。
+//                    urlConnection.setRequestMethod("POST");
+//                    urlConnection.setDoInput(true);
+//                    urlConnection.setDoOutput(true);
+//                    urlConnection.setUseCaches(false);
+//                    urlConnection.setInstanceFollowRedirects(true);
+//                    urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+////                    urlConnection.setRequestProperty("Charset", "utf-8");
+////                    urlConnection.setReadTimeout(5000);
+////                    urlConnection.setConnectTimeout(5000);
+//
 //                    urlConnection.connect();
-
-
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(
-                            urlConnection.getInputStream()));
-                    String line;
-                    System.out.println("=============================");
-                    System.out.println("Contents of post request");
-                    System.out.println("=============================");
-                    while ((line = reader.readLine()) != null) {
-                        System.out.println(line);
-                    }
-                    System.out.println("=============================");
-                    System.out.println("Contents of post request ends");
-                    System.out.println("=============================");
-                    reader.close();
-                    urlConnection.disconnect();
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
+//
+//
+//                    DataOutputStream dataOutputStream = new DataOutputStream(urlConnection.getOutputStream());
+//                    String data = "param1=" + URLEncoder.encode("哈哈哈哈！", "utf-8")+"&param2="+URLEncoder.encode("get到！！", "UTF-8");
+//                    dataOutputStream.writeBytes(data);
+////                    String content = "firstname=" + URLEncoder.encode("一个大肥人", "utf-8");
+//                    dataOutputStream.flush();
+//                    dataOutputStream.close();
+////                    urlConnection.connect();
+//
+//
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+//                            urlConnection.getInputStream()));
+//                    String line;
+//                    System.out.println("=============================");
+//                    System.out.println("Contents of post request");
+//                    System.out.println("=============================");
+//                    while ((line = reader.readLine()) != null) {
+//                        System.out.println(line);
+//                    }
+//                    System.out.println("=============================");
+//                    System.out.println("Contents of post request ends");
+//                    System.out.println("=============================");
+//                    reader.close();
+//                    urlConnection.disconnect();
+//
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
+//    }
 
     public void PostDataToServletWithOkHttp(){
         OkHttpClient client = new OkHttpClient.Builder()
@@ -101,11 +101,11 @@ public class MainActivity extends AppCompatActivity {
         //    请求条件：platform=2&gifttype=2&compare=60841c5b7c69a1bbb3f06536ed685a48
         //    请求参数：page=1&code=news&pageSize=20&parentid=0&type=1
         RequestBody requestBodyPost = new FormBody.Builder()
-                .add("param1", "1")
-                .add("param2", "news")
-                .add("pageSize", "20")
-                .add("parentid", "0")
-                .add("type", "1")
+                .add("uname", "iiii")
+                .add("upwd", "987654")
+//                .add("pageSize", "20")
+//                .add("parentid", "0")
+//                .add("type", "1")
                 .build();
         Request requestPost = new Request.Builder()
                 .url("http://192.168.3.8:8080/TestJson/servlet/GetDataFromClient")
@@ -114,7 +114,12 @@ public class MainActivity extends AppCompatActivity {
         client.newCall(requestPost).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tv.setText("fail!");
+                    }
+                });
             }
 
             @Override
