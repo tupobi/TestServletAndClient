@@ -1,0 +1,4 @@
+# TestServletAndClient
+实现Javaweb（myeclipse）servlet与Android client端数据交互
+
+servlet实现传递和读取Android客户端数据，Android客户端利用OkHttp 和HttpUrlConnectionc传递和接受servlet发来的数据，如果是发来的数据，则用Gson映射解析。
