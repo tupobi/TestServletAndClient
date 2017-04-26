@@ -38,18 +38,35 @@ public class ManagerDao {
 	
 	public boolean postManagerToDB(Manager manager){
 		connection = connectionManager.getConnection_jdbc();
-		String sql = "INSERT INTO manager VALUES(? , ?)";
+		String sql = "SELECT * FROM manager WHERE uname='"+manager.getUname()+"' AND upwd='"+manager.getUpwd()+"'";
+		try {
+			PreparedStatement ps = (PreparedStatement) connection.prepareStatement(sql);
+//			ps.setString(1, manager.getUname());
+//			ps.setString(2, manager.getUpwd());
+			ResultSet resultSet = ps.executeQuery(sql);
+			if(resultSet.next()){
+				return true;
+			}else{
+				return false;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			connectionManager.closeConnection();
+		}
+		return false;
+	}
+	
+	public boolean addManagerToDB(Manager manager){
+		connection = connectionManager.getConnection_jdbc();
+		String sql = "INSERT INTO manager VALUES (?, ?)";
 		try {
 			PreparedStatement ps = (PreparedStatement) connection.prepareStatement(sql);
 			ps.setString(1, manager.getUname());
 			ps.setString(2, manager.getUpwd());
-			int result = ps.executeUpdate();
-			
-			if(result == 0){
-				return false;
-			}else{
-				return true;
-			}
+			ps.execute();
+			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

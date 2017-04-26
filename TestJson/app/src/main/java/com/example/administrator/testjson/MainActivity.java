@@ -1,24 +1,17 @@
 package com.example.administrator.testjson;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -30,16 +23,20 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     private List<Manager> managers;
-    private TextView tv;
+    private EditText etUserName, etUserPassword;
+    private Button btnLogin;
+//    public static void actionStart(Context context){
+//        context.startActivity(new Intent(context, MainActivity.class));
+//    }
 
 //    private void PostDataToServletWithHttpURLConnection() {
 //
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
-//                String strUrl = "http://192.168.3.8:8080/TestJson/servlet/GetDataFromClient";
+//                String strUrl = "http://192.168.43.42:8080/TestJson/servlet/GetDataFromClient";
 //                URL url = null;
 //                try {
 //                    Log.d("------------->", "PostDataToServlet: 进入传值方法！！！");
@@ -101,14 +98,14 @@ public class MainActivity extends AppCompatActivity {
         //    请求条件：platform=2&gifttype=2&compare=60841c5b7c69a1bbb3f06536ed685a48
         //    请求参数：page=1&code=news&pageSize=20&parentid=0&type=1
         RequestBody requestBodyPost = new FormBody.Builder()
-                .add("uname", "iiii")
-                .add("upwd", "987654")
+                .add("uname", etUserName.getText().toString())
+                .add("upwd", etUserPassword.getText().toString())
 //                .add("pageSize", "20")
 //                .add("parentid", "0")
 //                .add("type", "1")
                 .build();
         Request requestPost = new Request.Builder()
-                .url("http://192.168.3.8:8080/TestJson/servlet/GetDataFromClient")
+                .url("http://192.168.43.42:8080/TestServletWithJson/servlet/GetDataFromClient")
                 .post(requestBodyPost)
                 .build();
         client.newCall(requestPost).enqueue(new Callback() {
@@ -117,18 +114,22 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        tv.setText("fail!");
+                        Toast.makeText(MainActivity.this, "服务器异常，请稍后再试", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                final String string = response.body().string();
+                final String result = response.body().string();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        tv.setText(string);
+                        if("true".equals(result)){
+                            AtyRecyclerView.actionStart(MainActivity.this);
+                        }else{
+                            Toast.makeText(MainActivity.this, "账号或密码错误", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
@@ -172,10 +173,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tv = (TextView) findViewById(R.id.tv);
         sendRequestWithOkHttp();
+        initView();
+
 //        PostDataToServletWithHttpURLConnection();
-        PostDataToServletWithOkHttp();
+//        PostDataToServletWithOkHttp();
+    }
+
+    private void initView() {
+        etUserName = (EditText) findViewById(R.id.et_userName);
+        etUserPassword = (EditText) findViewById(R.id.et_userPassWord);
+        btnLogin = (Button) findViewById(R.id.btn_login);
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PostDataToServletWithOkHttp();
+            }
+        });
     }
 
     private void sendRequestWithOkHttp() {
@@ -183,10 +198,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+//                    Log.d("------>", "run: ");
                     //引入OkHttpClient的库依赖。
                     OkHttpClient client = new OkHttpClient();
                     Request request = new Request.Builder()
-                            .url("http://192.168.3.8:8080/TestJson/servlet/GetManagerInfor")
+                            .url("http://192.168.43.42:8080/TestServletWithJson/servlet/GetManagerInfor")
                             .build();
                     Response response = client.newCall(request).execute();
                     String responseData = response.body().string();
@@ -209,14 +225,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void parseJSONWithGSON(String jsonData) {
+//        Log.d("------>", "parse ");
         Gson gson = new Gson();
         managers = gson.fromJson(jsonData, new TypeToken<List<Manager>>() {
         }.getType());
-        Log.d("------------->", "parseJSONWithGSON: ");
-        for (Manager manager : managers) {
-            Log.d("--------------->", "uname:" + manager.getUname());
-            Log.d("--------------->", "upwd:" + manager.getUpwd());
-        }
+//        Log.d("------------->", "parseJSONWithGSON: ");
+//        for (Manager manager : managers) {
+//            Log.d("--------------->", "uname:" + manager.getUname());
+//            Log.d("--------------->", "upwd:" + manager.getUpwd());
+//        }
     }
 
 //    private void parseJSONWithGSON(String jsonData){

@@ -3,7 +3,7 @@
   type="WEB"
   name="TestServletWithJson"
   id="myeclipse.1492922055769"
-  context-root="/TestJson"
+  context-root="/TestServletWithJson"
   j2ee-spec="5.0"
   archive="TestServletWithJson.war">
   <attributes>

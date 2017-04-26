@@ -2,9 +2,6 @@ package com.Jay.mobileClient;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,17 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 import com.Jay.biz.ManagerBiz;
 import com.Jay.entity.Manager;
 
-public class GetManagerInfor extends HttpServlet {
-	private Map managerMap;
-	private String result;
+public class AddManagerToDB extends HttpServlet {
 	private ManagerBiz managerBiz;
-	
+
 	/**
 	 * Constructor of the object.
 	 */
-	public GetManagerInfor() {
+	public AddManagerToDB() {
 		super();
-		managerMap = new HashMap();
 		managerBiz = new ManagerBiz();
 	}
 
@@ -48,50 +42,9 @@ public class GetManagerInfor extends HttpServlet {
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		doPost(request, response);
 	}
-	
-	public String productJsonData(){
-		List<Manager> managers = managerBiz.getManagerInforFromDB();
-////		for(int i=0; i<managers.size(); i++){
-////			System.out.println(i);
-////			managerMap.put("uname", managers.get(i).getUname());
-////			managerMap.put("upwd", managers.get(i).getUpwd());
-////		}
-//		managerMap.put("managers", managers);
-//		
-//		JsonConfig config = new JsonConfig();
-//		JSONObject jsonObject = JSONObject.fromObject(managerMap, config);
-//		return jsonObject.toString();
-//		//左边参数是要转换的数据，右边是数据的配置信息，包括屏蔽某些信息。
-		
-		StringBuffer sb = new StringBuffer();
-	
-		//双引号引起变量需要加\"表示双引号，不方便
-//		for(Manager manager : managers){
-//			sb.append("{").append("\"uname\":").append("\""+manager.getUname()+"\"").append(",");
-//			sb.append("\"upwd\":").append("\""+manager.getUpwd()+"\"");
-//			sb.append("}").append(",");
-//		}
-//		sb.deleteCharAt(sb.length()-1);
-//		//去掉最后一个逗号。
-//		sb.append("]");
-//		return new String(sb);
-		
-		//单引号引起变量，不用转义字符，方便一些。
-		sb.append("[");
-		for(Manager manager : managers){
-			sb.append("{").append("'uname':").append("'"+manager.getUname()+"'").append(",");
-			sb.append("'upwd':").append("'"+manager.getUpwd()+"'");
-			sb.append("}").append(",");
-		}
-		sb.deleteCharAt(sb.length()-1);
-		//去掉最后一个逗号。
-		sb.append("]");
-		return new String(sb);
-		
-	}
+
 	/**
 	 * The doPost method of the servlet. <br>
 	 *
@@ -108,7 +61,16 @@ public class GetManagerInfor extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		PrintWriter out = response.getWriter();
 		
-		out.write(productJsonData());
+		String uname = request.getParameter("uname");
+		String upwd = request.getParameter("upwd");
+		Manager manager = new Manager(uname, upwd);
+		if(managerBiz.addManagerToDB(manager)){
+			out.write("true");
+		}else{
+			out.write("false");
+		}
+		
+		
 		out.flush();
 		out.close();
 	}

@@ -20,4 +20,8 @@ public class ManagerBiz {
 	public boolean postManagerToDB(Manager manager){
 		return managerDao.postManagerToDB(manager);
 	}
+	
+	public boolean addManagerToDB(Manager manager){
+		return managerDao.addManagerToDB(manager);
+	}
 }
